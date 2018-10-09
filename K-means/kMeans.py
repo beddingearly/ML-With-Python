@@ -1,75 +1,108 @@
-#coding:utf-8
+#coding=utf-8
 '''
-Created on 2015Äê11ÔÂ9ÈÕ
-
+Created on 2015å¹´11æœˆ9æ—¥
 @author: Administrator
 '''
 import numpy as np
 
+
 def kMeans(X, k, maxIt):
-    #ºá×İ×ø±ê
-    numPoints, numDim = X.shape
+    '''
+
+    :param X: æ•°æ®é›†
+    :param k: ç°‡æ•°
+    :param maxIt: æ‰§è¡Œå¾ªç¯æ¬¡æ•°
+    :return:
+    '''
+    # æ¨ªçºµåæ ‡
+    numPoints, numDim = X.shape  # 4 2
     dataSet = np.zeros((numPoints, numDim + 1))
-    dataSet[: ,: -1 ] = X
-    #Ëæ»ú²úÉúĞÂµÄÖĞĞÄµã
-    centroids = dataSet[np.random.randint(numPoints, size = k), :]
-    #centroids = dataSet[0:2,:]
-    #¸øk¸öÖĞĞÄµã±êÇ©¸³ÖµÎª[1£¬k+1]
-    centroids[:, -1] = range(1, k+1)
-    
-    iterations = 0 #Ñ­»·´ÎÊı
-    oldCentroids = None  #ÓÃÀ´´¢´æ¾ÉµÄÖĞĞÄµã
-    
+    dataSet[:, : -1] = X
+    # ä»å·²æœ‰çš„ç‚¹é›†ä¸­éšæœºäº§ç”Ÿæ–°çš„ä¸­å¿ƒç‚¹
+    tmp = np.random.randint(numPoints, size=k)
+    # print('randint', tmp)
+    centroids = dataSet[tmp, :]
+    # centroids = dataSet[0:2,:]
+    # ç»™kä¸ªä¸­å¿ƒç‚¹æ ‡ç­¾èµ‹å€¼ä¸º[1ï¼Œk+1]
+    # å¢åŠ ä¸€åˆ—æ˜¯ä¿å­˜ç°‡æ ‡ç­¾
+    #print ('cnetroids1', centroids)
+    centroids[:, -1] = range(1, k + 1) # æ ‡ç­¾åˆ—è´Ÿå€¼1 2
+    #print ('cnetroids2', centroids)
+
+    iterations = 0  # å¾ªç¯æ¬¡æ•°
+    oldCentroids = None  # ç”¨æ¥å‚¨å­˜æ—§çš„ä¸­å¿ƒç‚¹
+
     while not shouldStop(oldCentroids, centroids, iterations, maxIt):
-        print "iterations:\n ",iterations
-        print "dataSet: \n",dataSet
-        print "centroids:\n ",centroids
-        
-        #ÓÃcopyµÄÔ­ÒòÊÇ½øĞĞ¸´ÖÆ£¬²»ÓÃ=ÊÇÒòÎª=Ïàµ±ÓÚÍ¬Ê±Ö¸ÏòÒ»¸öµØÖ·£¬Ò»¸ö¸Ä±äÁíÍâÒ»¸öÒ²»á¸Ä±ä
+        print "iterations:\n ", iterations
+        print "dataSet: \n", dataSet
+        print "centroids:\n ", centroids
+
+        # ç”¨copyçš„åŸå› æ˜¯è¿›è¡Œå¤åˆ¶ï¼Œä¸ç”¨=æ˜¯å› ä¸º=ç›¸å½“äºåŒæ—¶æŒ‡å‘ä¸€ä¸ªåœ°å€ï¼Œä¸€ä¸ªæ”¹å˜å¦å¤–ä¸€ä¸ªä¹Ÿä¼šæ”¹å˜
         oldCentroids = np.copy(centroids)
         iterations += 1
-        
-        #¸üĞÂÖĞĞÄµã
+
+        # æ›´æ–°æ¯ä¸ªç‚¹é›†çš„ä¸­å¿ƒç‚¹label
         updataLabels(dataSet, centroids)
-        
-        #µÃµ½ĞÂµÄÖĞĞÄµã
+
+        # å¾—åˆ°æ–°çš„ä¸­å¿ƒç‚¹
         centroids = getCentroids(dataSet, k)
-    
+
     return dataSet
-    
+
+
 def shouldStop(oldCentroids, centroids, iterations, maxIt):
     if iterations > maxIt:
         return True
-    return np.array_equal(oldCentroids, centroids)
+    return np.array_equal(oldCentroids, centroids)  # æ˜¯å¦å…·æœ‰ç›¸åŒçš„ç»“æ„
 
 
 def updataLabels(dataSet, centroids):
+    '''
+    æ›´æ–°æ ‡ç­¾
+    :param dataSet: æ•°æ®ç‚¹é›†
+    :param centroids: ä¸­å¿ƒåæ ‡ç‚¹
+    :return:
+    '''
     numPoints, numDim = dataSet.shape
-    for i in range(0,numPoints):
-        dataSet[i,-1] = getLabelFromCloseestCentroid(dataSet[i, :-1],centroids)
-        
+    for i in range(0, numPoints):
+        dataSet[i, -1] = getLabelFromCloseestCentroid(dataSet[i, :-1], centroids)
+
 
 def getLabelFromCloseestCentroid(dataSetRow, centroids):
-    label = centroids[0, -1]
-    #np.linalg.norm() ¼ÆËãÁ½¸öÏòÁ¿Ö®¼äµÄ¾àÀë
+    '''
+
+    :param dataSetRow:æŸä¸ªç‚¹çš„äºŒç»´åæ ‡ç‚¹
+    :param centroids:ä¸­å¿ƒåæ ‡
+    :return:
+    '''
+    label = centroids[0, -1]# å…ˆåˆå§‹åŒ–ä¸ºä¸€ä¸ªä¸­å¿ƒç‚¹çš„æ ‡ç­¾
+    # np.linalg.norm() è®¡ç®—ä¸¤ä¸ªå‘é‡ä¹‹é—´çš„è·ç¦»
+    print('dataSetRow', dataSetRow)
+    print('cetroids', centroids[0, :-1])
     minDist = np.linalg.norm(dataSetRow - centroids[0, :-1])
-    for i in range(1,centroids.shape[0]):
-        dist = np.linalg.norm(dataSetRow - centroids[i,:-1])
+    for i in range(1, centroids.shape[0]):#2
+        dist = np.linalg.norm(dataSetRow - centroids[i, :-1])# å’Œä¸¤ä¸ªä¸­å¿ƒç‚¹çš„è·ç¦»
         if dist < minDist:
             minDist = dist
-            label = centroids[i,-1]
-            
-        print "minDist :\n" ,minDist
+            label = centroids[i, -1]
+
+        print "minDist :\n", minDist
         return label
-    
-    
+
+
 def getCentroids(dataSet, k):
+    '''
+    æ›´æ–°ä¸­å¿ƒç‚¹
+    :param dataSet:
+    :param k:
+    :return: ä¸‹æ¬¡å¾ªç¯çš„ä¸­å¿ƒç‚¹
+    '''
     result = np.zeros((k, dataSet.shape[1]))
-    for i in range(1, k+1):
-        oneCluster = dataSet[dataSet[:,-1] == i,:-1]
-        result[i - 1, :-1] = np.mean(oneCluster, axis=0)
+    for i in range(1, k + 1):# 1 2
+        oneCluster = dataSet[dataSet[:, -1] == i, :-1]  # æœ€åä¸€åˆ—å³labelç›¸ç­‰çš„ç‚¹é›†
+        result[i - 1, :-1] = np.mean(oneCluster, axis=0)  # å‹ç¼©è¡Œï¼Œå¯¹å„åˆ—æ±‚å‡å€¼
         result[i - 1, -1] = i
-        
+    print('result', result)
     return result
 
 
@@ -78,6 +111,6 @@ x2 = np.array([2, 1])
 x3 = np.array([4, 3])
 x4 = np.array([5, 4])
 testX = np.vstack((x1, x2, x3, x4))
-
-result = kMeans(testX, 2, 10)
-print "final result: \n",result
+print('dataset', testX)
+result = kMeans(testX, 2, 3)
+print "final result: \n", result
