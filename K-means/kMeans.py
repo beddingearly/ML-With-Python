@@ -14,6 +14,9 @@ def kMeans(X, k, maxIt):
     :param maxIt: 执行循环次数
     :return:
     '''
+
+
+    ### dfafdaf
     # 横纵坐标
     numPoints, numDim = X.shape  # 4 2
     dataSet = np.zeros((numPoints, numDim + 1))
