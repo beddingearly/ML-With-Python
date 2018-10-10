@@ -14,13 +14,10 @@ def kMeans(X, k, maxIt):
     :param maxIt: 执行循环次数
     :return:
     '''
-
-
-    ### dfafdaf
     # 横纵坐标
     numPoints, numDim = X.shape  # 4 2
     dataSet = np.zeros((numPoints, numDim + 1))
-    dataSet[:, : -1] = X
+    dataSet[:, :-1] = X
     # 从已有的点集中随机产生新的中心点
     tmp = np.random.randint(numPoints, size=k)
     # print('randint', tmp)
