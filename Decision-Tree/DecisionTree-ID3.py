@@ -5,32 +5,52 @@ from math import log
 import operator
 
 def createDataSet():
-    dataSet =[[1,1,'yes'],
-              [1,1,'yes'],
-              [1,0,'no'],
-              [0,1,'no'],
-              [0,1,'no']]
-    labels = ['no surfacing','flippers'] #分类的属性
-    return dataSet,labels
+    # dataSet =[[1,1,'yes'],
+    #           [1,1,'yes'],
+    #           [1,0,'no'],
+    #           [0,1,'no'],
+    #           [0,1,'no']]
+    # labels = ['no surfacing','flippers'] #分类的属性
+
+    dataSet = \
+        [[0, 0, 0, 0, 'no'],
+         [0, 0, 0, 1, 'no'],
+         [0, 1, 0, 1, 'yes'],
+         [0, 1, 1, 0, 'yes'],
+         [0, 0, 0, 0, 'no'],
+         [1, 0, 0, 0, 'no'],
+         [1, 0, 0, 1, 'no'],
+         [1, 1, 1, 1, 'yes'],
+         [1, 0, 1, 2, 'yes'],
+         [1, 0, 1, 2, 'yes'],
+         [2, 0, 1, 2, 'yes'],
+         [2, 0, 1, 1, 'yes'],
+         [2, 1, 0, 1, 'yes'],
+         [2, 1, 0, 2, 'yes'],
+         [2, 0, 0, 0, 'no']]
+    # 分类属性
+    labels = ['age', 'work', 'horse', 'credit']
+
+    return dataSet, labels
     
-#计算给定数据的香农熵
+# 计算给定数据的香农熵
 def calcShannonEnt(dataSet):
     numEntries = len(dataSet)
     labelCounts = {}
     for featVec in dataSet:
         currentLabel = featVec[-1] #获得标签
-        #构造存放标签的字典
+        # 构造存放标签的字典
         if currentLabel not in labelCounts.keys():
             labelCounts[currentLabel]=0
         labelCounts[currentLabel]+=1 #对应的标签数目+1
-    #计算香农熵
+    # 计算香农熵
     shannonEnt = 0.0
     for key in labelCounts:
         prob = float(labelCounts[key])/numEntries
         shannonEnt -=prob*log(prob,2)
     return shannonEnt
 
-#划分数据集,三个参数为带划分的数据集，划分数据集的特征，特征的返回值
+# 划分数据集,三个参数为带划分的数据集，划分数据集的特征，特征的返回值
 def splitDataSet(dataSet,axis,value):  
     retDataSet = []
     for featVec in dataSet:
